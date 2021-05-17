@@ -1,5 +1,5 @@
 from enum import unique
-from ..pw_db import BaseModel
+from .base_model import BaseModel
 import peewee as pw
 
 

@@ -1,11 +1,11 @@
-from ..pw_db import BaseModel
+from .base_model import BaseModel
 import peewee as pw
 from datetime import datetime
 from .user import User
 from typing import List
 
 
-class Notes(BaseModel):
+class Note(BaseModel):
     title = pw.CharField(unique=True)
     description = pw.TextField()
     created_date = pw.DateTimeField(default=datetime.now)
