@@ -1,5 +1,4 @@
-from models import user, notes
+from models import user, note
 from models.base_model import db
 
-db.create_tables([user.User, notes.Note])
-
+db.create_tables([user.User, note.Note])

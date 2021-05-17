@@ -12,5 +12,9 @@ class Note(BaseModel):
     user = pw.ForeignKeyField(User, related_name="notes")
 
     @classmethod
-    def find_all(cls, _id: int) -> List["Notes"]:
-        return cls.select().where(User.id == _id)
+    def find_all(cls, _id: int) -> List["Note"]:
+        return cls.select().where(cls.user == _id)
+    
+    @classmethod
+    def find_by_title(cls, title: str) -> "Note":
+        return cls.get(cls.title == title)

@@ -1,4 +1,4 @@
-from bottle import request, response
+from bottle import request
 from bottle import HTTPResponse as http_res
 
 from marshmallow import ValidationError
@@ -8,7 +8,6 @@ from schemas.user import UserSchema
 
 from utils.manage_token import create_token
 
-import json
 
 user_schema = UserSchema()
 
@@ -43,8 +42,8 @@ def login_user():
     except ValidationError as err:
         body = {"errors": err.messages}
         return http_res(status=422, body=body)
-    
-    # Authentication and create token 
+
+    # Authentication and create token
     try:
         user = User.find_by_username(user_data['username'])
         if user.password == user_data["password"]:

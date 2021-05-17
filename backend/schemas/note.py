@@ -1,8 +1,9 @@
-from marshmallow import Schema, fields
+from marshmallow import fields
 from .user import UserSchema
+from .base_schema import BaseSchema
 
 
-class NotesSchema(Schema):
+class NoteSchema(BaseSchema):
     id = fields.Int(dump_only=True)
     title = fields.Str(required=True)
     description = fields.Str(required=True)
