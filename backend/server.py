@@ -1,9 +1,7 @@
-# Run with "python server.py"
+from bottle import Bottle
 
-from bottle import run
-
-# Start your code here, good luck (: ...
+app = Bottle()
 
 
-
-run(host='localhost', port=8000)
+if __name__ == '__main__':
+    app.run(host='localhost', port=8000)
