@@ -1,5 +1,4 @@
 from bottle import request, response
-from bottle import HTTPResponse as http_res
 
 from marshmallow import ValidationError
 
@@ -22,7 +21,7 @@ def register_user():
         user_data = user_schema.load(user_json).data
     except ValidationError as err:
         response.status = 422
-        return {"errors": err.messages}
+        return {"error": err.messages}
 
     # Checking if username already exists
     try:
@@ -43,7 +42,7 @@ def login_user():
         user_data = user_schema.load(user_json).data
     except ValidationError as err:
         response.status = 422
-        return {"errors": err.messages}
+        return {"error": err.messages}
 
     # Authentication and create token
     try:
@@ -54,4 +53,4 @@ def login_user():
         raise ValueError
     except:
         response.status = 400
-        return {"errors": "Invalid credentials"}
+        return {"error": "Invalid credentials"}

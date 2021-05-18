@@ -1,4 +1,3 @@
-import re
 from bottle import Bottle, response, request
 
 from resources import user, note
@@ -10,7 +9,7 @@ app = Bottle()
 
 @app.hook('after_request')
 def set_headers():
-    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:5000'
     response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, Authorization'
     response.content_type = 'application/json'
 
@@ -30,9 +29,7 @@ def login_user():
 @app.route('/notes', method=['POST', 'OPTIONS'])
 @token_required
 def create_note(token):
-    print(token)
-    if request.method == 'POST':
-        return note.create_note(token)
+    return note.create_note(token)
 
 
 @app.get('/notes')
