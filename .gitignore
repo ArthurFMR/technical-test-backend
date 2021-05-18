@@ -5,7 +5,11 @@ __pycache__/
 *.db
 # C extensions
 *.so
+<<<<<<< HEAD
 .vscode/
+=======
+*.vscode
+>>>>>>> eeed61c9740e3593c32992a59e4102bb2c3ac8ad
 # Distribution / packaging
 .Python
 build/
