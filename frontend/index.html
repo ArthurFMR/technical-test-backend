@@ -1,1 +1,188 @@
-<!-- You can use any js library (: -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>User Notes</title>
+</head>
+
+<body>
+    <div id="app">
+        <!--Login Register Form--------->
+        <div class="columns">
+            <div class="column"></div>
+            <div class="column">
+                <h2 class="title is-2" v-if="login">Login</h2>
+                <h2 class="title is-2" v-if="!login">Register</h2>
+                <div class="field">
+                    <label class="label">Username</label>
+                    <div class="control">
+                        <input required class="input" type="text" v-model="userData.username">
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Password</label>
+                    <div class="control">
+                        <input required class="input" type="password" v-model="userData.password">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <p class="control">
+                        <button class="button is-success" v-if="login" @click="loginUser">
+                            Login
+                        </button>
+                        <button class="button is-link" v-if="!login" @click="register">
+                            Register
+                        </button>
+                        <a v-if="login" @click="changeForm(!login)">Create an Account</a>
+                        <a v-if="!login" @click="changeForm(!login)">Login</a>
+                    </p>
+                </div>
+            </div>
+            <div class="column"></div>
+        </div>
+
+        <!--Note Form-->
+        <div class="columns">
+            <div class="column"></div>
+            <div class="column field">
+                <label class="label">Note Title</label>
+                <div class="control">
+                    <input v-model="noteData.title" class="input" type="text" placeholder="Write note title"></textarea>
+                </div>
+            </div>
+            <div class="column"></div>
+        </div>
+
+        <div class="columns">
+            <div class="column"></div>
+            <div class="column field">
+                <label class="label">Note Description</label>
+                <div class="control">
+                    <textarea v-model="noteData.description" class="textarea"
+                        placeholder="Write note Description"></textarea>
+                </div>
+
+            </div>
+            <div class="column"></div>
+        </div>
+
+        <div class="columns">
+            <div class="column"></div>
+            <button class="button is-primary mt-6" @click="addNote">Add Note</button>
+            <div class="column"></div>
+        </div>
+
+        <!--Notes list-->
+        <div class="columns" v-for="note in notes">
+            <div class="column"></div>
+            <div class="column card">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ note.title }}
+                    </p>
+                </header>
+                <div class="card-content">
+                    <div class="content">
+                        {{ note.description }}
+                        <br>
+                        <time datetime="2016-1-1">{{ note.create_date }}</time>
+                    </div>
+                </div>
+            </div>
+            <div class="column"></div>
+        </div>
+
+    </div>
+
+
+    <script>
+        const BASE_URL = "http://localhost:8000";
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                login: true,
+                logged: false,
+                notes: [],
+                userData: {
+                    username: "",
+                    password: ""
+                },
+
+                noteData: {
+                    title: "",
+                    description: ""
+                }
+            },
+
+            mounted() {
+                if (localStorage.getItem("token")) {
+                    this.logged = true
+                } else { this.logged = false }
+            },
+
+            methods: {
+                changeForm(bool) {
+                    this.login = bool
+                },
+
+                register() {
+                    let url = `${BASE_URL}/users/register`;
+
+                    axios.post(url, this.userData)
+                        .then(response => {
+                            console.log(response)
+                            this.login = true;
+                            this.userData.username = "";
+                            this.userData.password = ""
+                        })
+                        .catch(err => {
+                            console.log(err.response)
+                        })
+                },
+
+                loginUser() {
+                    let url = `${BASE_URL}/users/login`;
+
+                    axios.post(url, this.userData)
+                        .then(response => {
+                            console.log(response.data.token)
+                            localStorage.setItem("token", response.data.token)
+                            this.login = true;
+                            this.userData.username = "";
+                            this.userData.password = ""
+                        })
+                        .catch(err => {
+                            console.log(err.response)
+                        })
+                },
+
+                addNote() {
+                    let url = `${BASE_URL}/notes`;
+                    let token = localStorage.getItem("token");
+
+                    axios.post(url, this.noteData)
+                        .then(response => {
+                            console.log(response.data)
+                            //this.notes.push(response.data.note)
+                            this.login = true;
+                            this.noteData.title = "";
+                            this.noteData.description = ""
+                        })
+                        .catch(err => {
+                            console.log(err.response)
+                        })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

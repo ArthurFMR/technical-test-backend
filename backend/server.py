@@ -1,4 +1,5 @@
-from bottle import Bottle, response
+import re
+from bottle import Bottle, response, request
 
 from resources import user, note
 from utils.auth import token_required
@@ -9,23 +10,29 @@ app = Bottle()
 
 @app.hook('after_request')
 def set_headers():
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, Authorization'
     response.content_type = 'application/json'
 
 
-@app.post('/users/register')
+@app.route('/users/register', method=['POST', 'OPTIONS'])
 def register_user():
-    return user.register_user()
+    if request.method == 'POST':
+        return user.register_user()
 
 
-@app.post('/users/login')
+@app.route('/users/login', method=['POST', 'OPTIONS'])
 def login_user():
-    return user.login_user()
+    if request.method == 'POST':
+        return user.login_user()
 
 
-@app.post('/notes')
+@app.route('/notes', method=['POST', 'OPTIONS'])
 @token_required
 def create_note(token):
-    return note.create_note(token)
+    print(token)
+    if request.method == 'POST':
+        return note.create_note(token)
 
 
 @app.get('/notes')
@@ -35,4 +42,4 @@ def get_notes(token):
 
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=8000)
+    app.run(host='localhost', port=8000, debug=True)

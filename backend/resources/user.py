@@ -1,4 +1,4 @@
-from bottle import request
+from bottle import request, response
 from bottle import HTTPResponse as http_res
 
 from marshmallow import ValidationError
@@ -8,29 +8,31 @@ from schemas.user import UserSchema
 
 from utils.manage_token import create_token
 
+import json
 
 user_schema = UserSchema()
 
 
 def register_user():
+
     user_json = request.json
 
     # Validation of data
     try:
         user_data = user_schema.load(user_json).data
     except ValidationError as err:
-        body = {"errors": err.messages}
-        return http_res(status=422, body=body)
+        response.status = 422
+        return {"errors": err.messages}
 
     # Checking if username already exists
     try:
         User.find_by_username(user_data['username'])
-        message = "That username already exists"
-        return http_res(status=400, body={"errors": message})
+        response.status = 400
+        return json.dumps({"error": "That username already exists"})
     except:
         user = User.create(**user_data)
         body = {"user": user_schema.dump(user).data}
-        return http_res(status=201, body=body)
+        return body
 
 
 def login_user():
@@ -40,17 +42,16 @@ def login_user():
     try:
         user_data = user_schema.load(user_json).data
     except ValidationError as err:
-        body = {"errors": err.messages}
-        return http_res(status=422, body=body)
+        response.status = 422
+        return {"errors": err.messages}
 
     # Authentication and create token
     try:
         user = User.find_by_username(user_data['username'])
         if user.password == user_data["password"]:
             token = create_token({'identity': user.id})
-            body = {"token": token}
-            return http_res(status=200, body=body)
+            return {"token": token}
         raise ValueError
     except:
-        body = {"errors": "Invalid credentials"}
-        return http_res(status=400, body=body)
+        response.status = 400
+        return {"errors": "Invalid credentials"}

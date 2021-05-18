@@ -14,7 +14,7 @@ class Note(BaseModel):
     @classmethod
     def find_all(cls, _id: int) -> List["Note"]:
         return cls.select().where(cls.user == _id)
-    
+
     @classmethod
     def find_by_title(cls, title: str) -> "Note":
         return cls.get(cls.title == title)

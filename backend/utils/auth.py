@@ -1,12 +1,11 @@
-from bottle import request, abort
-from bottle import HTTPResponse as http_res
+from bottle import request, response
 
 
 def token_required(func):
     def wrapper():
         token = request.headers.get('authorization')
         if not token:
-            body = {"errors": "Access denied. Token is Missing"}
-            return http_res(status=403, body=body)
+            response.status = 403
+            return {"error": "Access denied. Token is Missing"}
         return func(token)
     return wrapper
